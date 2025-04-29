@@ -1,0 +1,193 @@
+{
+  "info": {
+    "name": "BigBoss Gym Management APIs",
+    "_postman_id": "bigboss-gym-collection-001",
+    "description": "APIs for Member, Trainer, and Payment management in BigBoss Gym System.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Members",
+      "item": [
+        {
+          "name": "Get All Members",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/api/members"
+            }
+          }
+        },
+        {
+          "name": "Register Member",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member_name\": \"John Doe\",\n  \"member_email\": \"john@example.com\",\n  \"member_tel\": \"123456789\",\n  \"member_password\": \"password\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/register"
+            }
+          }
+        },
+        {
+          "name": "Update Member",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member_name\": \"Updated Name\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/members/:id"
+            }
+          }
+        },
+        {
+          "name": "Delete Member",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:5000/api/member/:id"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Trainers",
+      "item": [
+        {
+          "name": "Get All Trainers",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/api/trainers"
+            }
+          }
+        },
+        {
+          "name": "Add Trainer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Trainer Name\",\n  \"email\": \"trainer@example.com\",\n  \"phone\": \"987654321\",\n  \"specialization\": \"Fitness\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/trainers"
+            }
+          }
+        },
+        {
+          "name": "Update Trainer",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Updated Trainer\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/trainers/:id"
+            }
+          }
+        },
+        {
+          "name": "Delete Trainer",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:5000/api/trainers/:id"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Payments",
+      "item": [
+        {
+          "name": "Get All Payments",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "http://localhost:5000/api/payments"
+            }
+          }
+        },
+        {
+          "name": "Add Payment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"member_id\": 1,\n  \"amount\": 100.00,\n  \"payment_date\": \"2025-04-27\",\n  \"payment_method\": \"Cash\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/payments"
+            }
+          }
+        },
+        {
+          "name": "Update Payment",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"amount\": 120.00\n}"
+            },
+            "url": {
+              "raw": "http://localhost:5000/api/payments/:id"
+            }
+          }
+        },
+        {
+          "name": "Delete Payment",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "http://localhost:5000/api/payments/:id"
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
