@@ -1,0 +1,93 @@
+{
+  "info": {
+    "name": "BigBoss Gym Backend APIs",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Register Member",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"John Doe\",\n  \"email\": \"john@example.com\",\n  \"tel\": \"0123456789\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/register"
+        }
+      }
+    },
+    {
+      "name": "Login Member",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"1234\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/login"
+        }
+      }
+    },
+    {
+      "name": "Create Payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"member_id\": \"MBR123456\",\n  \"items\": [\n    {\n      \"name\": \"Yoga Mat\",\n      \"price\": 20\n    }\n  ],\n  \"total_amount\": 20,\n  \"payment_method\": \"Cash\",\n  \"promo_used\": \"NEWYEAR10\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/payment"
+        }
+      }
+    },
+    {
+      "name": "Submit Feedback",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"trainer\": \"Jane Smith\",\n  \"rating\": 5,\n  \"comment\": \"Excellent training!\"\n}"
+        },
+        "url": {
+          "raw": "http://localhost:5000/api/feedback"
+        }
+      }
+    },
+    {
+      "name": "Get Feedback by Trainer",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/feedback?trainer=Jane Smith"
+        }
+      }
+    }
+  ]
+}

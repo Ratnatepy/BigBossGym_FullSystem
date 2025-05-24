@@ -297,15 +297,6 @@
 
 
 
-
-
-
-
-
-
-
-
-
 /*Add on*/
 /* contact.css - Styles for contact page */
 #contact {
@@ -379,3 +370,105 @@
   .social-media a:hover img {
     transform: scale(1.1);
   }
+
+
+  /* 🌙 Dark Mode (universal) */
+body.dark {
+  background-color: #121212;
+  color: #f0f0f0;
+}
+
+body.dark .section,
+body.dark main,
+body.dark .card,
+body.dark .form-control {
+  background-color: #1e1e1e;
+  color: #ddd;
+  border-color: #333;
+}
+
+body.dark .btn,
+body.dark .btn-accent {
+  background-color: #408a63;
+  color: white;
+}
+
+body.dark .navbar {
+  background-color: #222;
+}
+
+body.dark .navbar ul li a:hover {
+  background-color: #444;
+}
+
+.dark-toggle {
+  background: #2e8b57;
+  color: white;
+  border: none;
+  font-size: 20px;
+  padding: 8px 12px;
+  margin-left: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.hamburger {
+  display: none;
+  font-size: 24px;
+  background: none;
+  border: none;
+  color: white;
+  cursor: pointer;
+}
+
+@media (max-width: 768px) {
+  .hamburger {
+    display: block;
+  }
+
+  .nav-links {
+    overflow: hidden;
+    flex-direction: column;
+    background: var(--primary);
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px 0;
+    max-height: 0;
+    transition: max-height 0.3s ease;
+  }
+
+  .nav-links.show {
+    max-height: 500px;
+  }
+
+  .navbar ul li {
+    margin: 10px 0;
+  }
+}
+body.dark .modal-content,
+body.dark .membership-card,
+body.dark .quick-stats {
+  background-color: #1f1f1f;
+  color: #e2e2e2;
+  border-color: #333;
+}
+/* 🌙 Footer in Dark Mode */
+body.dark .footer {
+  background-color: #1e1e1e;
+  color: #ccc;
+}
+
+body.dark .footer-section h2 {
+  color: #f6ad55;
+}
+
+body.dark .footer-section a {
+  color: #ccc;
+}
+
+body.dark .footer-section a:hover {
+  color: #f6ad55;
+}
+
+body.dark .social-media a img {
+  filter: brightness(0.8);
+}

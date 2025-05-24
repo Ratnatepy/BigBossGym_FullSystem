@@ -1,0 +1,286 @@
+{
+  "info": {
+    "name": "BigBoss Gym Backend API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_postman_id": "bigboss-gym-backend-api-collection"
+  },
+  "item": [
+    {
+      "name": "Test API",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            ""
+          ]
+        }
+      }
+    },
+    {
+      "name": "Member Registration",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/register",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "register"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"member_name\": \"John Doe\",\n  \"member_email\": \"john@example.com\",\n  \"member_tel\": \"0123456789\",\n  \"membership_type\": \"Premium\",\n  \"join_date\": \"2024-05-01\",\n  \"member_password\": \"password123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Member Login",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/login",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"email\": \"john@example.com\",\n  \"password\": \"password123\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Submit Contact Form",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/contact",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "contact"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"name\": \"Jane Smith\",\n  \"email\": \"jane@example.com\",\n  \"message\": \"I want to know more about gym membership.\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Submit Feedback",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/feedback",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "feedback"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"trainer\": \"Trainer A\",\n  \"rating\": 5,\n  \"comment\": \"Excellent session!\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Get All Members",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/getData/members",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "getData",
+            "members"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Get Member by ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/getData/members/1",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "getData",
+            "members",
+            "1"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Fetch All Payments",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/payments",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "payments"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Make a Payment",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "http://localhost:5000/api/payments",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "payments"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"member_id\": \"MBR123456\",\n  \"amount\": 100.0,\n  \"payment_date\": \"2024-05-01\",\n  \"payment_method\": \"cash\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Count Members",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/members/count",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "members",
+            "count"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Count Trainers",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/trainers/count",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "trainers",
+            "count"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Total Income",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/payments/total",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "payments",
+            "total"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Monthly Income",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:5000/api/payments/monthly-income",
+          "host": [
+            "localhost"
+          ],
+          "port": "5000",
+          "path": [
+            "api",
+            "payments",
+            "monthly-income"
+          ]
+        }
+      }
+    }
+  ]
+}

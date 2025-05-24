@@ -11,7 +11,7 @@
   <nav class="navbar">
     <img src="img/logo.jpg" alt="Big Boss Gym Logo" class="logo">
     <ul>
-      <li><a href="index.html">About</a></li>
+      <li><a href="index.html">Welcome</a></li>
       <li><a href="home.html">Home</a></li>
       <li><a href="member.html">Members</a></li>
       <li><a href="trainer.html">Trainers</a></li>
@@ -21,8 +21,11 @@
       <li><a href="contact.html">Contact</a></li>
       <li><a href="login.html">Login</a></li>
       <li><a href="account.html">My Account</a></li>
+      <li><a href="chatbot.html">Gymbot</a></li>
       
     </ul>
+    <button id="dark-toggle" class="dark-toggle">🌓</button>
+
   </nav>
 
   <main>
@@ -60,12 +63,42 @@
         </div>
       </div>
       
+      <!-- QR Code Section -->
+      <div id="qr-code-container" style="display: none; margin-top: 20px;">
+        <h4>Scan the QR Code to Pay</h4>
+        <img id="qr-code-image" src="" alt="QR Code for Payment" style="width: 200px; height: 200px;">
+      </div>
+
       <button id="confirm-payment" class="btn btn-accent mt-4">Confirm Payment</button>
     </section>
   </main>
+
+  <!-- Scripts -->
   <script src="js/cart.js"></script>
   <script src="js/payment.js"></script>
   <script src="js/nav.js"></script>
   <script src="js/sendDataToBackend.js"></script>
+
+  <!-- Inline script to control QR display -->
+  <script>
+    const paymentMethodSelect = document.getElementById('payment-method');
+    const qrCodeContainer = document.getElementById('qr-code-container');
+    const qrCodeImage = document.getElementById('qr-code-image');
+
+    const qrCodes = {
+      aba: 'img/qr/aba.jpg',   // Change path if needed
+      wing: 'img/qr/aba.jpg'  // Change path if needed
+    };
+
+    paymentMethodSelect.addEventListener('change', function () {
+      const selected = this.value;
+      if (qrCodes[selected]) {
+        qrCodeImage.src = qrCodes[selected];
+        qrCodeContainer.style.display = 'block';
+      } else {
+        qrCodeContainer.style.display = 'none';
+      }
+    });
+  </script>
 </body>
 </html>

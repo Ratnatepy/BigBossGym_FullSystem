@@ -10,7 +10,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const navItems = document.querySelectorAll('.navbar ul li a');
         if (!navItems.length) return; // Defensive: navbar not found
 
-        const protectedRoutes = ['trainer.html', 'workouts.html', 'shops.html', 'contact.html', 'payment.html', 'account.html']; // ✅ removed extra comma
+        const protectedRoutes = ['trainer.html', 'workouts.html', 'shops.html', 'contact.html', , 'account.html']; // ✅ removed extra comma
 
         navItems.forEach(item => {
             const href = item.getAttribute('href');

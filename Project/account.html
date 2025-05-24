@@ -10,8 +10,11 @@
 <body>
     <nav class="navbar">
         <img src="img/logo.jpg" alt="Big Boss Gym Logo" class="logo">
-        <ul>
-            <li><a href="index.html">About</a></li>
+        <button id="hamburger" class="hamburger" aria-label="Toggle navigation" aria-expanded="false">&#9776;</button>
+
+
+        <ul id="nav-links" class="nav-links">
+            <li><a href="index.html">Welcome</a></li>
             <li><a href="home.html">Home</a></li>
             <li><a href="member.html">Members</a></li>
             <li><a href="trainer.html">Trainers</a></li>
@@ -21,7 +24,10 @@
             <li><a href="contact.html">Contact</a></li>
             <li><a href="account.html" class="active">My Account</a></li>
             <li><a href="logout.html">Logout</a></li>
+            <li><a href="chatbot.html">Gymbot</a></li>
         </ul>
+        <button id="dark-toggle" class="dark-toggle">🌓</button>
+
     </nav>
 
     <main>
@@ -233,4 +239,29 @@
     <script src="js/account.js"></script>
     <script src="js/sendDataToBackend.js"></script>
 </body>
+
+<script>
+  const toggle = document.getElementById('dark-toggle');
+  const hamburger = document.getElementById("hamburger");
+  const navLinks = document.getElementById("nav-links");
+  const body = document.body;
+
+  // 🌗 Dark Mode
+  if (localStorage.getItem("theme") === "dark") {
+    body.classList.add("dark");
+  }
+
+  toggle.addEventListener("click", () => {
+    body.classList.toggle("dark");
+    localStorage.setItem("theme", body.classList.contains("dark") ? "dark" : "light");
+  });
+
+  // 📱 Hamburger Menu Toggle with ARIA
+  hamburger.addEventListener("click", () => {
+    const expanded = hamburger.getAttribute("aria-expanded") === "true";
+    hamburger.setAttribute("aria-expanded", !expanded);
+    navLinks.classList.toggle("show");
+  });
+</script>
+
 </html>
