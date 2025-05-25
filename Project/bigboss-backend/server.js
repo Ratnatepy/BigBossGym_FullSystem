@@ -553,69 +553,77 @@ app.get('/api/payments/monthly', async (req, res) => {
 });
 
 /**
- * CHATBOT ENDPOINT - Clean Text Version
- * Interfaces with external Java chatbot using stdin/stdout
+ * CHATBOT ENDPOINT - Handles message forwarding to Java RMI chatbot
  */
 app.get('/chatbot', async (req, res) => {
-    const msg = req.query.msg;
-    if (!msg) {
-        console.error('[CHATBOT] [ERROR] Missing message parameter');
-        return res.status(400).send('Please enter your question');
-    }
+  const msg = req.query.msg;
+  if (!msg) {
+    console.error('[CHATBOT] [ERROR] Missing message parameter');
+    return res.status(400).send('Please enter your question');
+  }
 
-    try {
-        const projectRoot = path.normalize('C:/tepy/Year 4/Y4S2/BigBossGym_Final_Project/Project');
-        const sanitizedMsg = msg.replace(/"/g, '\\"').replace(/\n/g, ' ');
+  try {
+    const projectRoot = path.normalize('C:/tepy/Year 4/Y4S2/BigBossGym_Final_Project/Project');
+    const sanitizedMsg = msg.replace(/"/g, '\\"').replace(/\n/g, ' ');
 
-        console.log('[CHATBOT] [INFO] Processing query:', sanitizedMsg);
+    console.log('[CHATBOT] [INFO] Processing query:', sanitizedMsg);
 
-        const command = `java -cp "${projectRoot}/bigboss_rmi;${projectRoot}" bigboss_rmi.ChatBridge "${sanitizedMsg}"`;
-        
-        const child = exec(command, { 
-            cwd: projectRoot,
-            timeout: 5000
-        });
+    const command = `java -cp "${projectRoot}/bigboss_rmi;${projectRoot}" bigboss_rmi.ChatBridge "${sanitizedMsg}"`;
 
-        let stdoutData = '';
-        let stderrData = '';
+    const child = exec(command, {
+      cwd: projectRoot,
+      timeout: 5000
+    });
 
-        child.stdout.on('data', (data) => {
-            stdoutData += data;
-            // Filter and log only debug messages
-            if (!data.startsWith('CHATBOT_RESPONSE:')) {
-                console.log('[JAVA]', data.trim());
-            }
-        });
+    let stdoutData = '';
+    let stderrData = '';
 
-        child.stderr.on('data', (data) => {
-            stderrData += data;
-            console.error('[JAVA] [ERROR]', data.trim());
-        });
+    child.stdout.on('data', (data) => {
+      stdoutData += data;
+      if (!data.startsWith('CHATBOT_RESPONSE:')) {
+        console.log('[JAVA]', data.trim());
+      }
+    });
 
-        child.on('close', (code) => {
-            const lastLine = stdoutData.trim().split('\n').pop() || '';
-            
-            if (lastLine.startsWith('CHATBOT_RESPONSE:')) {
-                const response = lastLine.replace('CHATBOT_RESPONSE:', '').trim();
-                console.log('[CHATBOT] [INFO] Response ready');
-                res.send(response);
-            }
-            else if (lastLine.startsWith('CHATBOT_ERROR:')) {
-                const error = lastLine.replace('CHATBOT_ERROR:', '').trim();
-                console.error('[CHATBOT] [ERROR]', error);
-                res.status(500).send('Unable to process your request');
-            }
-            else {
-                console.error('[CHATBOT] [ERROR] Invalid response format');
-                res.status(500).send('Service error');
-            }
-        });
+    child.stderr.on('data', (data) => {
+      stderrData += data;
+      console.error('[JAVA] [ERROR]', data.trim());
+    });
 
-    } catch (err) {
-        console.error('[SYSTEM] [ERROR]', err);
-        res.status(500).send('Service unavailable');
-    }
+    child.on('close', (code) => {
+      const lines = stdoutData
+        .replace(/\r\n/g, '\n')
+        .split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0);
+
+      console.log('[CHATBOT] [DEBUG] All output lines:', lines);
+
+      const startIndex = lines.findIndex(line => line.startsWith('CHATBOT_RESPONSE:'));
+      if (startIndex !== -1) {
+        const responseLines = lines.slice(startIndex).map(line =>
+          line.replace(/^CHATBOT_RESPONSE:\s*/, '') // remove the prefix from the first line
+        );
+        const response = responseLines.join('\n').trim();
+        console.log('[CHATBOT] [INFO] Response ready');
+        res.send(response);
+      } else if (lines.some(line => line.startsWith('CHATBOT_ERROR:'))) {
+        const errorLine = lines.find(line => line.startsWith('CHATBOT_ERROR:'));
+        const error = errorLine.replace('CHATBOT_ERROR:', '').trim();
+        console.error('[CHATBOT] [ERROR]', error);
+        res.status(500).send('Unable to process your request');
+      } else {
+        console.error('[CHATBOT] [ERROR] Invalid response format');
+        res.status(500).send('Service error');
+      }
+    });
+
+  } catch (err) {
+    console.error('[SYSTEM] [ERROR]', err);
+    res.status(500).send('Service unavailable');
+  }
 });
+
 // Insert sample trainers on startup
 async function insertSampleTrainers() {
   try {

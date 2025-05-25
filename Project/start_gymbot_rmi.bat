@@ -26,9 +26,9 @@ if %errorlevel% neq 0 (
 echo 🧹 Cleaning previous compilation...
 del bigboss_rmi\*.class 2>nul
 
-:: 3. Compile RMI components
+:: 3. Compile RMI components (in-place without -d flag)
 echo 🛠️  Compiling RMI system...
-javac -encoding UTF-8 -d bigboss_rmi bigboss_rmi\*.java
+javac -encoding UTF-8 bigboss_rmi\*.java
 if %errorlevel% neq 0 (
     echo ❌ Compilation failed! Check Java files
     pause
@@ -37,7 +37,7 @@ if %errorlevel% neq 0 (
 
 :: 4. Start RMI Server
 echo 🚀 Launching RMI Server...
-start "GymBot RMI Server" cmd /k "java -cp bigboss_rmi bigboss_rmi.GymServer"
+start "GymBot RMI Server" cmd /k "java -cp . bigboss_rmi.GymServer"
 
 :: 5. Verify startup
 echo ⏳ Initializing RMI registry (3s)...

@@ -4,30 +4,43 @@ import java.rmi.Naming;
 import java.util.Scanner;
 
 public class ChatBridge {
-    private static final String LOG_PREFIX = "[GYMBOT]";
-    
+    private static final String LOG_PREFIX = "[GYMBOT] ";
+
     public static void main(String[] args) {
         try {
             // Debug arguments
-            System.out.printf("%s [DEBUG] Received %d arguments%n", LOG_PREFIX, args.length);
+            System.out.printf("%s[DEBUG] Received %d argument(s)\n", LOG_PREFIX, args.length);
             if (args.length > 0) {
-                System.out.printf("%s [DEBUG] Processing query: %s%n", LOG_PREFIX, args[0]);
+                System.out.printf("%s[DEBUG] Processing input: \"%s\"\n", LOG_PREFIX, String.join(" ", args));
             }
 
             // Connect to RMI server
             GymService gymService = (GymService) Naming.lookup("rmi://localhost:1099/GymService");
-            String input = args.length > 0 ? String.join(" ", args) : new Scanner(System.in).nextLine();
-            
-            System.out.printf("%s [QUERY] Sending to server: %s%n", LOG_PREFIX, input);
+
+            // Get user input (from args or console)
+            String input;
+            if (args.length > 0) {
+                input = String.join(" ", args);
+            } else {
+                try (Scanner scanner = new Scanner(System.in)) {
+                    System.out.print(LOG_PREFIX + "[INPUT] Type your question: ");
+                    input = scanner.nextLine();
+                }
+            }
+
+            // Send to server
+            System.out.printf("%s[QUERY] Sending to server: \"%s\"\n", LOG_PREFIX, input);
             String response = gymService.askQuestion(input);
-            
-            // Final output (for Node.js to capture)
-            System.out.printf("CHATBOT_RESPONSE:%s%n", response);
-            
+
+            // Output reply for logs
+            System.out.printf("%s[RESPONSE] %s\n", LOG_PREFIX, response);
+
+            // ✅ Output formatted response for Node.js backend to detect
+            System.out.println("CHATBOT_RESPONSE: " + response);
+
         } catch (Exception e) {
-            System.err.printf("%s [ERROR] %s%n", LOG_PREFIX, e.getMessage());
-            System.out.printf("CHATBOT_ERROR:%s%n", e.getMessage());
-            System.exit(1);
+            System.err.printf("%s[ERROR] %s\n", LOG_PREFIX, e.getMessage());
+            e.printStackTrace();
         }
     }
 }
