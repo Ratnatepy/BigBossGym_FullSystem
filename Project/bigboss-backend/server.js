@@ -559,7 +559,7 @@ app.get('/api/payments/monthly', async (req, res) => {
 app.get('/chatbot', async (req, res) => {
     const msg = req.query.msg;
     if (!msg) {
-        console.error('[CHATBOT] Missing message parameter');
+        console.error('[CHATBOT] [ERROR] Missing message parameter');
         return res.status(400).send('Please enter your question');
     }
 
@@ -567,7 +567,7 @@ app.get('/chatbot', async (req, res) => {
         const projectRoot = path.normalize('C:/tepy/Year 4/Y4S2/BigBossGym_Final_Project/Project');
         const sanitizedMsg = msg.replace(/"/g, '\\"').replace(/\n/g, ' ');
 
-        console.log(`[CHATBOT] Processing: "${sanitizedMsg}"`);
+        console.log('[CHATBOT] [INFO] Processing query:', sanitizedMsg);
 
         const command = `java -cp "${projectRoot}/bigboss_rmi;${projectRoot}" bigboss_rmi.ChatBridge "${sanitizedMsg}"`;
         
@@ -581,29 +581,39 @@ app.get('/chatbot', async (req, res) => {
 
         child.stdout.on('data', (data) => {
             stdoutData += data;
-            console.log(`[JAVA OUTPUT] ${data.trim()}`);
+            // Filter and log only debug messages
+            if (!data.startsWith('CHATBOT_RESPONSE:')) {
+                console.log('[JAVA]', data.trim());
+            }
         });
 
         child.stderr.on('data', (data) => {
             stderrData += data;
-            console.error(`[JAVA ERROR] ${data.trim()}`);
+            console.error('[JAVA] [ERROR]', data.trim());
         });
 
         child.on('close', (code) => {
             const lastLine = stdoutData.trim().split('\n').pop() || '';
             
-            if (code === 0 && lastLine) {
-                // Send clean text response without JSON wrapping
-                res.send(lastLine);
-            } else {
-                console.error(`[CHATBOT ERROR] Process exited with code ${code}`);
-                res.status(500).send('Unable to process your request at this time');
+            if (lastLine.startsWith('CHATBOT_RESPONSE:')) {
+                const response = lastLine.replace('CHATBOT_RESPONSE:', '').trim();
+                console.log('[CHATBOT] [INFO] Response ready');
+                res.send(response);
+            }
+            else if (lastLine.startsWith('CHATBOT_ERROR:')) {
+                const error = lastLine.replace('CHATBOT_ERROR:', '').trim();
+                console.error('[CHATBOT] [ERROR]', error);
+                res.status(500).send('Unable to process your request');
+            }
+            else {
+                console.error('[CHATBOT] [ERROR] Invalid response format');
+                res.status(500).send('Service error');
             }
         });
 
     } catch (err) {
-        console.error('[SYSTEM ERROR]', err);
-        res.status(500).send('Service temporarily unavailable');
+        console.error('[SYSTEM] [ERROR]', err);
+        res.status(500).send('Service unavailable');
     }
 });
 // Insert sample trainers on startup
