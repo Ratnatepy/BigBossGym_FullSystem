@@ -1,15 +1,17 @@
 // Load environment variables from .env file
 require('dotenv').config();
 
+
 // Import required modules
+const path = require('path');
 const express = require('express');
 const cors = require('cors');
 const pool = require('./db'); // Database connection pool
 const bcrypt = require('bcrypt'); // Password hashing
 const rateLimit = require('express-rate-limit'); // Rate limiting
 const { body, validationResult } = require('express-validator'); // Input validation
-const { exec } = require('child_process'); // For executing shell commands
-const nodemailer = require('nodemailer');
+const { exec, spawn } = require('child_process'); // For executing shell commands
+const fs = require('fs');
 
 // Initialize Express application
 const app = express();
@@ -550,42 +552,71 @@ app.get('/api/payments/monthly', async (req, res) => {
   }
 });
 
-
-
 /**
  * CHATBOT ENDPOINT
- * Interfaces with external Java chatbot
+ * Interfaces with external Java chatbot using stdin/stdout
  */
-app.get('/chatbot', (req, res) => {
-  const msg = req.query.msg;
-  if (!msg) {
-    console.log('[Chatbot API] Missing message');
-    return res.status(400).send('Missing message');
-  }
 
-  // Execute Java chatbot program
-  const javaCmd = `java -cp ../Project bigboss_rmi.ChatBridge "${msg}"`;
-  console.log(`[Chatbot API] Executing: ${javaCmd}`);
-
-  exec(javaCmd, (err, stdout, stderr) => {
-    if (err) {
-      console.error('[Chatbot Exec Error]', err);
-      return res.status(500).send('Error contacting chatbot');
+app.get('/chatbot', async (req, res) => {
+    const msg = req.query.msg;
+    if (!msg) {
+        return res.status(400).json({ error: 'Missing message parameter' });
     }
 
-    if (stderr) {
-      console.warn('[Chatbot stderr]', stderr);
+    try {
+        const projectRoot = path.normalize('C:/tepy/Year 4/Y4S2/BigBossGym_Final_Project/Project');
+        const sanitizedMsg = msg.replace(/"/g, '\\"').replace(/\n/g, ' ');
+
+        console.log(`[Chatbot] Processing: "${sanitizedMsg}"`);
+
+        // Updated classpath to include both the package directory and project root
+        const command = `java -cp "${projectRoot}/bigboss_rmi;${projectRoot}" bigboss_rmi.ChatBridge "${sanitizedMsg}"`;
+        
+        const child = exec(command, { 
+            cwd: projectRoot,
+            timeout: 5000
+        });
+
+        let stdoutData = '';
+        let stderrData = '';
+
+        child.stdout.on('data', (data) => {
+            stdoutData += data;
+            console.log(`[Java] ${data.trim()}`);
+        });
+
+        child.stderr.on('data', (data) => {
+            stderrData += data;
+            console.error(`[Java Error] ${data.trim()}`);
+        });
+
+        child.on('close', (code) => {
+            const lastLine = stdoutData.trim().split('\n').pop() || '';
+            
+            if (lastLine.startsWith('CHATBOT_RESPONSE:')) {
+                const response = lastLine.replace('CHATBOT_RESPONSE:', '').trim();
+                return res.json({ response });
+            } 
+            else if (lastLine.startsWith('CHATBOT_ERROR:')) {
+                const error = lastLine.replace('CHATBOT_ERROR:', '').trim();
+                return res.status(500).json({ 
+                    error: 'Chatbot error',
+                    details: error || 'Unknown error'
+                });
+            }
+            else {
+                return res.status(500).json({ 
+                    error: 'Invalid chatbot response',
+                    details: stderrData || 'No response received'
+                });
+            }
+        });
+
+    } catch (err) {
+        console.error('[System Error]', err);
+        res.status(500).json({ error: 'Service unavailable' });
     }
-
-    // Process chatbot response
-    console.log('[Chatbot stdout]', stdout);
-    const lines = stdout.trim().split('\n');
-    const lastLine = lines[lines.length - 1]; // Get final response line
-
-    res.send(lastLine); // Send response to client
-  });
 });
-
 // Insert sample trainers on startup
 async function insertSampleTrainers() {
   try {

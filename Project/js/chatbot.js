@@ -8,11 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to append a new message bubble to the chat body
   function appendMessage(sender, text) {
-    const msg = document.createElement("div");  // Create a div element for the message
-    msg.className = sender;                      // Assign class 'user' or 'bot' for styling
-    msg.innerText = text;                        // Set the message text content
-    chatBody.appendChild(msg);                   // Add the message div to chat container
-    chatBody.scrollTop = chatBody.scrollHeight; // Scroll chat to the bottom to show newest message
+    const msg = document.createElement("div");
+    msg.className = sender;  // 'user' or 'bot'
+    msg.innerText = text;
+    chatBody.appendChild(msg);
+    chatBody.scrollTop = chatBody.scrollHeight; // Auto scroll to latest
   }
 
   // Show initial welcome messages from the bot
@@ -21,37 +21,34 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Function to send user input to backend and display response
   function sendMessage(input) {
-    if (!input) return;                // Ignore empty input
-    appendMessage("user", input);     // Show user's message in chat
-    chatInput.value = "";             // Clear input box after sending
+    if (!input) return;
+    appendMessage("user", input);
+    chatInput.value = "";
 
-    // Call backend chatbot API with encoded input message
+    // Send GET request to /chatbot with ?msg= query
     fetch(`http://localhost:5000/chatbot?msg=${encodeURIComponent(input)}`)
       .then(res => {
-        // Check if response is okay, else throw error to be caught
         if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
-        return res.text();            // Parse response as plain text
+        return res.text();
       })
       .then(reply => {
-        // Slight delay before displaying bot reply for better UX
         setTimeout(() => appendMessage("bot", reply.trim()), 500);
       })
       .catch(err => {
-        // Log error to console and show friendly error message in chat
         console.error(err);
         appendMessage("bot", "⚠️ Sorry, I couldn’t connect to the server.");
       });
   }
 
-  // Add event listener to the send button to send message on click
+  // Send on button click
   chatSend.addEventListener("click", () => sendMessage(chatInput.value.trim()));
 
-  // Add event listener to input box to send message on Enter key press
+  // Send on Enter key
   chatInput.addEventListener("keypress", e => {
     if (e.key === "Enter") sendMessage(chatInput.value.trim());
   });
 
-  // Add click event listeners to each prompt button to send quick messages
+  // Quick prompt buttons
   chatPrompts.forEach(button => {
     button.addEventListener("click", () => {
       sendMessage(button.innerText);
