@@ -553,23 +553,22 @@ app.get('/api/payments/monthly', async (req, res) => {
 });
 
 /**
- * CHATBOT ENDPOINT
+ * CHATBOT ENDPOINT - Clean Text Version
  * Interfaces with external Java chatbot using stdin/stdout
  */
-
 app.get('/chatbot', async (req, res) => {
     const msg = req.query.msg;
     if (!msg) {
-        return res.status(400).json({ error: 'Missing message parameter' });
+        console.error('[CHATBOT] Missing message parameter');
+        return res.status(400).send('Please enter your question');
     }
 
     try {
         const projectRoot = path.normalize('C:/tepy/Year 4/Y4S2/BigBossGym_Final_Project/Project');
         const sanitizedMsg = msg.replace(/"/g, '\\"').replace(/\n/g, ' ');
 
-        console.log(`[Chatbot] Processing: "${sanitizedMsg}"`);
+        console.log(`[CHATBOT] Processing: "${sanitizedMsg}"`);
 
-        // Updated classpath to include both the package directory and project root
         const command = `java -cp "${projectRoot}/bigboss_rmi;${projectRoot}" bigboss_rmi.ChatBridge "${sanitizedMsg}"`;
         
         const child = exec(command, { 
@@ -582,39 +581,29 @@ app.get('/chatbot', async (req, res) => {
 
         child.stdout.on('data', (data) => {
             stdoutData += data;
-            console.log(`[Java] ${data.trim()}`);
+            console.log(`[JAVA OUTPUT] ${data.trim()}`);
         });
 
         child.stderr.on('data', (data) => {
             stderrData += data;
-            console.error(`[Java Error] ${data.trim()}`);
+            console.error(`[JAVA ERROR] ${data.trim()}`);
         });
 
         child.on('close', (code) => {
             const lastLine = stdoutData.trim().split('\n').pop() || '';
             
-            if (lastLine.startsWith('CHATBOT_RESPONSE:')) {
-                const response = lastLine.replace('CHATBOT_RESPONSE:', '').trim();
-                return res.json({ response });
-            } 
-            else if (lastLine.startsWith('CHATBOT_ERROR:')) {
-                const error = lastLine.replace('CHATBOT_ERROR:', '').trim();
-                return res.status(500).json({ 
-                    error: 'Chatbot error',
-                    details: error || 'Unknown error'
-                });
-            }
-            else {
-                return res.status(500).json({ 
-                    error: 'Invalid chatbot response',
-                    details: stderrData || 'No response received'
-                });
+            if (code === 0 && lastLine) {
+                // Send clean text response without JSON wrapping
+                res.send(lastLine);
+            } else {
+                console.error(`[CHATBOT ERROR] Process exited with code ${code}`);
+                res.status(500).send('Unable to process your request at this time');
             }
         });
 
     } catch (err) {
-        console.error('[System Error]', err);
-        res.status(500).json({ error: 'Service unavailable' });
+        console.error('[SYSTEM ERROR]', err);
+        res.status(500).send('Service temporarily unavailable');
     }
 });
 // Insert sample trainers on startup
